@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'apiService.dart';
+part of 'api_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -13,7 +13,7 @@ class _ApiService implements ApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://la-herencia-api.up.railway.app/productos';
+    baseUrl ??= 'https://churrasqueriaherencia.onrender.com';
   }
 
   final Dio _dio;
@@ -34,7 +34,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '',
+              '/activos',
               queryParameters: queryParameters,
               data: _data,
             )

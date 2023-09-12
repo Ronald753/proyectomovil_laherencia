@@ -20,8 +20,8 @@ class _PantallaInicioState extends State<PantallaInicio> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/img/logo.jpg", // Ruta de tu logo
+            Image.network(
+              "https://storage.googleapis.com/primerstorage/20230908_020308_logochurrasqueria.jpg", // Ruta de tu logo
               fit: BoxFit.fill, // Altura deseada del logo
             ),
           ],

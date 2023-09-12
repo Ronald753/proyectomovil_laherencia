@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   retrofit: '>=4.0.0 <5.0.0'
   logger: any  #for logging purpose
+  dio: ^5.3.2
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
