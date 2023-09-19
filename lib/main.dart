@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:proyectomovil/view/inicio_botones.dart';
-import 'package:proyectomovil/view/pruebaapi.dart';
-import 'package:proyectomovil/view/menu.dart';
 
 void main() {
   runApp(const MyApp());

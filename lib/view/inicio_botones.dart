@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyectomovil/view/inicio.dart';
 import 'package:proyectomovil/view/menu.dart';
+import 'package:proyectomovil/view/pedidos.dart';
 
 class PantallaInicioBotones extends StatefulWidget {
   const PantallaInicioBotones({super.key});
@@ -14,7 +15,7 @@ class _PantallaInicioBotonesState extends State<PantallaInicioBotones> {
   final List<Widget> _pages = [
     PantallaInicio(),
     PantallaMenu(),
-    Text("Pedidos"),
+    PantallaPedidos(),
     Text("Perfil"),
   ];
 
