@@ -4,7 +4,8 @@ part 'modelProductos.g.dart';
 
 @JsonSerializable()
 class Productos {
-  int? id;
+  @JsonKey(name: '_id')
+  String? id;
   String? nombre;
   String? descripcion;
   double? precio;

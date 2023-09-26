@@ -9,4 +9,10 @@ abstract class ApiService {
 
   @GET('/activos')
   Future<List<Productos>> getProductos();
+
+  @PUT('/activos/{id}') // Utiliza el método HTTP correcto y la ruta de actualización adecuada
+  Future<Productos> updateProducto(
+    @Path('id') String id, // Debes proporcionar el ID del producto que deseas actualizar
+    @Body() Map<String, dynamic> body, // El cuerpo de la solicitud debe contener el nuevo valor de la puntuación
+  );
 }
