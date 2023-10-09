@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:proyectomovil/model/Carrito.dart';
 import 'package:proyectomovil/model/modelProductos.dart';
 import 'package:proyectomovil/service/api_service.dart';
 import 'package:dio/dio.dart';
+import 'package:proyectomovil/view/carrito_pantalla.dart';
 
 
 class PantallaDetalles extends StatefulWidget {
@@ -16,13 +19,59 @@ class PantallaDetalles extends StatefulWidget {
 
 class _PantallaDetallesState extends State<PantallaDetalles> {
   double? puntuacion;
+  final GlobalKey<ScaffoldState> _globalKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Consumer<Carrito>(builder: (context, carrito, child){
+      return Scaffold(
+        key: _globalKey,
       appBar: AppBar(
         title: Text("Detalles del Producto"),
         backgroundColor: Colors.amber,
+        actions: <Widget>[
+          new Stack(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.shopping_cart), 
+                onPressed: (){
+                  if(carrito.numeroProductos == 0){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Agrega un producto"),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext) => PantallaCarrito()
+                      ));
+                  }
+                }
+              ),
+              new Positioned(
+                top: 6,
+                right: 6,
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: new BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(4)),
+                    constraints: BoxConstraints(
+                      minWidth: 14,
+                      minHeight: 14
+                    ),
+                  child: Text(
+                    carrito.numeroProductos.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                    color: Colors.white, 
+                    fontSize: 9
+                  ),),
+                ),
+              ),
+            ],
+          )
+        ],
       ),
       body: Align(
         alignment: Alignment.topCenter,
@@ -37,7 +86,16 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Agregar lógica para agregar el producto al carrito aquí
+                setState(() {
+                  carrito.agregarItem(
+                    widget.productosD.id.toString(), 
+                    widget.productosD.nombre.toString(), 
+                    widget.productosD.precio?.toDouble() ?? 0.0, 
+                    "1", 
+                    widget.productosD.imagen.toString(), 
+                    1
+                  );
+                });// Agregar lógica para agregar el producto al carrito aquí
               },
               child: Text("Agregar al Carrito"),
             ),
@@ -82,14 +140,18 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
                         ElevatedButton(
                           onPressed: () async {
                             final rating = puntuacion;
-                            
+                            final userId = 'ID_DEL_USUARIO_AQUI'; // Reemplaza con el ID del usuario actual
+
                             try {
                               final apiService = ApiService(Dio()); // Crea una instancia de ApiService
-                              
+
+                              // Crea un mapa con el ID de usuario y la puntuación
+                              final puntuacionData = {'usuarioId': userId, 'puntuacion': rating};
+
                               // Llama al método para actualizar la puntuación en la API
                               await apiService.updateProducto(
                                 widget.productosD.id.toString(), // ID del producto
-                                {'puntuacion': rating}, // Datos de la puntuación
+                                puntuacionData, // Datos de la puntuación con ID de usuario
                               );
 
                               // Puedes manejar la respuesta del servidor si es necesario
@@ -114,5 +176,6 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
         ),
       ),
     );
+    });
   }
 }

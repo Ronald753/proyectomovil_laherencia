@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:proyectomovil/model/Carrito.dart';
 import 'package:proyectomovil/view/inicio_botones.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(
+  ChangeNotifierProvider(
+      create: (context) => Carrito(),
+      child: MyApp(),
+    )
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,6 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'La Herencia',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
