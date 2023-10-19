@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyectomovil/view/inicio.dart';
+import 'package:proyectomovil/view/login.dart';
 import 'package:proyectomovil/view/menu.dart';
 import 'package:proyectomovil/view/pedidos.dart';
 
@@ -16,7 +17,7 @@ class _PantallaInicioBotonesState extends State<PantallaInicioBotones> {
     PantallaInicio(),
     PantallaMenu(),
     PantallaPedidos(),
-    Text("Perfil"),
+    PantallaLogin(),
   ];
 
   @override

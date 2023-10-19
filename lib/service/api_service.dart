@@ -7,12 +7,22 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio) = _ApiService;
 
+  //Obtener categorias
+
+
+
+  //Obtener productos
   @GET('/activos')
   Future<List<Productos>> getProductos();
 
+  //Actualizar puntuacion
   @PUT('/activos/{id}') // Utiliza el método HTTP correcto y la ruta de actualización adecuada
   Future<Productos> updateProducto(
     @Path('id') String id, // Debes proporcionar el ID del producto que deseas actualizar
     @Body() Map<String, dynamic> body, // El cuerpo de la solicitud debe contener el nuevo valor de la puntuación
   );
+
+  //
+
+  
 }

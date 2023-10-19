@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyectomovil/model/Carrito.dart';
 import 'package:proyectomovil/view/inicio_botones.dart';
+import 'package:proyectomovil/view/login.dart';
+import 'package:proyectomovil/view/pruebaapi.dart';
 
 void main() => runApp(
   ChangeNotifierProvider(
@@ -24,6 +26,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: PantallaInicioBotones()
+        //home: PantallaLogin(),
     );
   }
 }

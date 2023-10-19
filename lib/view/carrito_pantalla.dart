@@ -17,7 +17,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
           backgroundColor: Colors.amber,
           elevation: 0,
         ),
-        body: Container(
+        body: SingleChildScrollView(
           child: carrito.items.length == 0
               ? Center(
                   child: Text("Carrito vacio"),
@@ -125,9 +125,9 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
                       padding: EdgeInsets.all(15),
                       child: Row(
                         children: <Widget>[
-                          Expanded(child: Text("Total")),
-                          Text("SubTotal: "),
-                          Text("Bs " + carrito.montoTotal.toString()),
+                          //Expanded(child: Text("Total")),
+                          
+                          Text("Total: " + "Bs " + carrito.montoTotal.toString()),
                         ],
                       ),
                     )

@@ -67,7 +67,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '/productos/${id}',
+              '/activos/${id}',
               queryParameters: queryParameters,
               data: _data,
             )

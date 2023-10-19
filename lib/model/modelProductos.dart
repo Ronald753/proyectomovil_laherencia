@@ -11,6 +11,7 @@ class Productos {
   double? precio;
   bool? estado;
   String? imagen;
+  String? categoria;
 
   Productos({
     this.id,
@@ -19,6 +20,7 @@ class Productos {
     this.precio,
     this.estado,
     this.imagen,
+    this.categoria,
   });
 
   factory Productos.fromJson(Map<String, dynamic> json) => _$ProductosFromJson(json);
