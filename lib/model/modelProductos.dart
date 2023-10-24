@@ -4,21 +4,21 @@ part 'modelProductos.g.dart';
 
 @JsonSerializable()
 class Productos {
-  @JsonKey(name: '_id')
-  String? id;
+  @JsonKey(name: 'id_producto') // Asegura que coincide con el nombre del campo en la API
+  String? id; // Cambiado de id_producto a id para mantener consistencia en el código
   String? nombre;
   String? descripcion;
   double? precio;
-  bool? estado;
   String? imagen;
-  String? categoria;
+  bool? estado;
+  @JsonKey(name: 'id_categoria')
+  int? categoria;
 
   Productos({
     this.id,
     this.nombre,
     this.descripcion,
     this.precio,
-    this.estado,
     this.imagen,
     this.categoria,
   });
@@ -26,3 +26,4 @@ class Productos {
   factory Productos.fromJson(Map<String, dynamic> json) => _$ProductosFromJson(json);
   Map<String, dynamic> toJson() => _$ProductosToJson(this);
 }
+

@@ -20,6 +20,7 @@ class PantallaDetalles extends StatefulWidget {
 class _PantallaDetallesState extends State<PantallaDetalles> {
   double? puntuacion;
   final GlobalKey<ScaffoldState> _globalKey = new GlobalKey<ScaffoldState>();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,7 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
           children: [
             Image.network(widget.productosD.imagen ?? 'Imagen no disponible'),
             Text(widget.productosD.id ?? 'Id no disponible'),
-            Text(widget.productosD.categoria ?? 'Categoria no disponible'),
+            Text('${widget.productosD.categoria ?? 'Categoria no disponible'}'),
             Text(widget.productosD.nombre ?? 'Nombre no disponible'),
             Text('Bs ${widget.productosD.precio ?? 'Precio no disponible'}'),
             Text(widget.productosD.descripcion ?? 'Descripción no disponible'),
@@ -100,6 +101,7 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
               },
               child: Text("Agregar al Carrito"),
             ),
+            /*
             ElevatedButton(
               onPressed: () {
                 showDialog(
@@ -172,7 +174,7 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
                 );
               },
               child: Text("Calificar Producto"),
-            ),
+            ),*/
           ],
         ),
       ),

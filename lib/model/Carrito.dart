@@ -17,6 +17,7 @@ class Carrito extends ChangeNotifier {
         (key, elementos) => total += elementos.precio * elementos.cantidad);
     return total;
   }
+  
 
   void agregarItem(
     String producto_id,

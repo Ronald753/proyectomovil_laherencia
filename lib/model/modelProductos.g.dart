@@ -7,21 +7,20 @@ part of 'modelProductos.dart';
 // **************************************************************************
 
 Productos _$ProductosFromJson(Map<String, dynamic> json) => Productos(
-      id: json['_id'] as String?,
+      id: json['id_producto'] as String?,
       nombre: json['nombre'] as String?,
       descripcion: json['descripcion'] as String?,
       precio: (json['precio'] as num?)?.toDouble(),
-      estado: json['estado'] as bool?,
       imagen: json['imagen'] as String?,
-      categoria: json['categoria'] as String?,
-    );
+      categoria: json['id_categoria'] as int?,
+    )..estado = json['estado'] as bool?;
 
 Map<String, dynamic> _$ProductosToJson(Productos instance) => <String, dynamic>{
-      '_id': instance.id,
+      'id_producto': instance.id,
       'nombre': instance.nombre,
       'descripcion': instance.descripcion,
       'precio': instance.precio,
-      'estado': instance.estado,
       'imagen': instance.imagen,
-      'categoria': instance.categoria,
+      'estado': instance.estado,
+      'id_categoria': instance.categoria,
     };

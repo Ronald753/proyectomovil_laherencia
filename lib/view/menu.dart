@@ -146,11 +146,13 @@ class PantallaMenu extends StatelessWidget {
                         children: <Widget>[
                           Image.network(
                             productos[index].imagen ?? 'Imagen no disponible',
+                            
                             height: 90, // Altura máxima
                             width: double.infinity, // Ancho máximo (puede ajustarlo según sus necesidades)
                             fit: BoxFit.cover, // Ajuste la imagen para que cubra el espacio disponible
                           ),
                           Text(productos[index].nombre ?? 'Nombre no disponible'),
+                          //Text(productos[index].categoria ?? 'Categoria no disponible'),
                           Text('Bs ${productos[index].precio ?? 'Precio no disponible'}'),
                         ],
                       ),

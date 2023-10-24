@@ -13,7 +13,7 @@ class _ApiService implements ApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://churrasqueriaherencia.onrender.com';
+    baseUrl ??= 'https://herencia-api.onrender.com';
   }
 
   final Dio _dio;
@@ -34,7 +34,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '/activos',
+              '/productos',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -50,24 +50,20 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<Productos> updateProducto(
-    String id,
-    Map<String, dynamic> body,
-  ) async {
+  Future<List<Categorias>> getCategorias() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body);
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<Productos>(Options(
-      method: 'PUT',
+        .fetch<List<dynamic>>(_setStreamType<List<Categorias>>(Options(
+      method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/activos/${id}',
+              '/categorias',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -76,7 +72,37 @@ class _ApiService implements ApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = Productos.fromJson(_result.data!);
+    var value = _result.data!
+        .map((dynamic i) => Categorias.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<LoginResponse> login(Map<String, dynamic> body) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<LoginResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/session/loginMovil',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = LoginResponse.fromJson(_result.data!);
     return value;
   }
 

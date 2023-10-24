@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyectomovil/model/Carrito.dart';
+import 'dart:convert';
 
 class PantallaCarrito extends StatefulWidget {
   @override
@@ -135,7 +136,13 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
                 ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            //print(jsonEncode(carrito.items));
+            print('Productos: ${carrito.items.keys}');
+            print('Productos: ${carrito.montoTotal}');
+            carrito.removeCarrito();
+            setState(() {});
+          },
           backgroundColor: Colors.red,
           child: Icon(
             Icons.send,
@@ -146,3 +153,5 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
     });
   }
 }
+
+
