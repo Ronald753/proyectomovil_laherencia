@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyectomovil/model/Carrito.dart';
-import 'dart:convert';
+import 'package:proyectomovil/model/modelPedido.dart';
+import 'package:proyectomovil/service/api_service.dart';
+import 'package:retrofit/http.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PantallaCarrito extends StatefulWidget {
   @override
@@ -9,6 +13,78 @@ class PantallaCarrito extends StatefulWidget {
 }
 
 class _PantallaCarritoState extends State<PantallaCarrito> {
+
+  Future<String?> obtenerIdUsuario() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('idUsuario');
+  }
+
+  Future<void> _enviarPedido(Pedido pedido) async {
+    final apiService = ApiService(Dio());
+
+    try {
+      // Envía el pedido a la API usando el método enviarPedido de ApiService
+      await apiService.enviarPedido(pedido);
+
+      // Actualiza el estado del widget para reflejar los cambios
+      setState(() {});
+    } catch (error) {
+      // Manejar errores aquí, como mostrar un mensaje al usuario
+      print('Error al enviar el pedido: $error');
+    }
+  }
+
+  void _mostrarVentanaEmergente(BuildContext context, Carrito carrito) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar Pedido'),
+          content: Text('¿Estás seguro de que deseas enviar el pedido?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra la ventana emergente
+              },
+            ),
+            TextButton(
+              child: Text('Enviar'),
+              onPressed: () async {
+                String idCliente = (await obtenerIdUsuario()) ?? '';
+                // Crea un objeto Pedido usando los datos del carrito
+                final pedido = Pedido(
+                  idCliente: idCliente,
+                  productos: carrito.items.values.map((item) {
+                    return ProductoPedido(
+                        idProducto: item.id, cantidad: item.cantidad);
+                  }).toList(),
+                );
+
+                // Llama al método para enviar el pedido
+                _enviarPedido(pedido);
+
+                // Muestra un mensaje de Snackbar informando que el pedido fue enviado
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Pedido enviado'),
+                  ),
+                );
+
+                // Limpia el carrito
+                carrito.removeCarrito();
+                print(pedido);
+
+                // Cierra la ventana emergente y la vista actual
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<Carrito>(builder: (context, carrito, child) {
@@ -127,8 +203,10 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
                       child: Row(
                         children: <Widget>[
                           //Expanded(child: Text("Total")),
-                          
-                          Text("Total: " + "Bs " + carrito.montoTotal.toString()),
+
+                          Text("Total: " +
+                              "Bs " +
+                              carrito.montoTotal.toString()),
                         ],
                       ),
                     )
@@ -137,11 +215,18 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            //print(jsonEncode(carrito.items));
-            print('Productos: ${carrito.items.keys}');
-            print('Productos: ${carrito.montoTotal}');
-            carrito.removeCarrito();
-            setState(() {});
+            if (carrito.numeroProductos == 0) {
+              // Muestra un mensaje de Snackbar informando que el carrito está vacío
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                      'El carrito está vacío. Agrega productos antes de enviar el pedido.'),
+                ),
+              );
+            } else {
+              // Muestra la ventana emergente de confirmación
+              _mostrarVentanaEmergente(context, carrito);
+            }
           },
           backgroundColor: Colors.red,
           child: Icon(
@@ -153,5 +238,3 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
     });
   }
 }
-
-

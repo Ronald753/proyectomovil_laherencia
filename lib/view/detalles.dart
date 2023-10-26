@@ -6,6 +6,8 @@ import 'package:proyectomovil/model/modelProductos.dart';
 import 'package:proyectomovil/service/api_service.dart';
 import 'package:dio/dio.dart';
 import 'package:proyectomovil/view/carrito_pantalla.dart';
+import 'package:proyectomovil/view/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class PantallaDetalles extends StatefulWidget {
@@ -20,10 +22,32 @@ class PantallaDetalles extends StatefulWidget {
 class _PantallaDetallesState extends State<PantallaDetalles> {
   double? puntuacion;
   final GlobalKey<ScaffoldState> _globalKey = new GlobalKey<ScaffoldState>();
+
+  bool _isLoggedIn = false;
+
+  Future<String?> obtenerIdUsuario() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('idUsuario');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarInicioSesion();
+  }
+
+  Future<void> _verificarInicioSesion() async {
+    String? userId = await obtenerIdUsuario();
+    setState(() {
+      _isLoggedIn = userId != null;
+    });
+  }
+  
   
 
   @override
   Widget build(BuildContext context) {
+
     return Consumer<Carrito>(builder: (context, carrito, child){
       return Scaffold(
         key: _globalKey,
@@ -88,19 +112,28 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                setState(() {
-                  carrito.agregarItem(
-                    widget.productosD.id.toString(), 
-                    widget.productosD.nombre.toString(), 
-                    widget.productosD.precio?.toDouble() ?? 0.0, 
-                    "1", 
-                    widget.productosD.imagen.toString(), 
-                    1
+                if (_isLoggedIn) {
+                  setState(() {
+                    carrito.agregarItem(
+                      widget.productosD.id.toString(),
+                      widget.productosD.nombre.toString(),
+                      widget.productosD.precio?.toDouble() ?? 0.0,
+                      "1",
+                      widget.productosD.imagen.toString(),
+                      1,
+                    );
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Debes iniciar sesión para agregar productos al carrito.'),
+                    ),
                   );
-                });// Agregar lógica para agregar el producto al carrito aquí
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PantallaLogin()));
+                }
               },
               child: Text("Agregar al Carrito"),
-            ),
+            )
             /*
             ElevatedButton(
               onPressed: () {

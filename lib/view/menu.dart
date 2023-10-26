@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyectomovil/model/MenuItems.dart';
+import 'package:proyectomovil/model/modelCategorias.dart';
 import 'package:proyectomovil/view/detalles.dart';
 import 'package:proyectomovil/model/modelProductos.dart';
 import 'package:proyectomovil/service/api_service.dart';
@@ -21,159 +22,149 @@ class PantallaMenu extends StatelessWidget {
     );
   }
 
-  FutureBuilder _body(){
-    final apiService =ApiService(Dio(BaseOptions(contentType: "application/json")));
+  FutureBuilder _body() {
+    final apiService = ApiService(Dio(BaseOptions(contentType: "application/json")));
     return FutureBuilder(
-        future: apiService.getProductos(),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.done){
-            final List<Productos> productos = snapshot.data!;
-            return _productos(productos);
-          }else{
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      future: apiService.getCategorias(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.done) {
+          final List<Categorias> categorias = snapshot.data!;
+          return _categoriasTabView(categorias, apiService);
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         }
+      },
     );
   }
 
-  Widget _productos(List<Productos> productos) {
+  Widget _categoriasTabView(List<Categorias> categorias, ApiService apiService) {
     return Consumer<Carrito>(builder: (context, carrito, child){
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text("Menu"),
-          backgroundColor: Colors.amber,
-          elevation: 0,
-          bottom: TabBar(
-            labelColor: Colors.red,
-            indicatorColor: Colors.red,
-            indicatorSize: TabBarIndicatorSize.label,
-            labelStyle: TextStyle(fontSize: 16.0),
-            tabs: <Widget>[
-              Tab(
-                child: Text("Platos"),
+      return DefaultTabController(
+        length: categorias.length,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Menu"),
+            backgroundColor: Colors.amber,
+            elevation: 0,
+            bottom: TabBar(
+                labelColor: Colors.red,
+                indicatorColor: Colors.red,
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: categorias.map((categoria) => Tab(child: Text(categoria.nombre ?? 'Nombre no disponible'))).toList(),
               ),
-              Tab(
-                child: Text("Guarniciones"),
-              ),
-              Tab(
-                child: Text("Gaseosas y jugos"),
-              ),
-              Tab(
-                child: Text("Aperitivos"),
+            actions: <Widget>[
+              new Stack(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.shopping_cart), 
+                    onPressed: (){
+                      if(carrito.numeroProductos == 0){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Agrega un producto"),
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext) => PantallaCarrito()
+                          ));
+                      }
+                    }
+                  ),
+                  new Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: new BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(4)),
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14
+                        ),
+                      child: Text(
+                        carrito.numeroProductos.toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 9
+                      ),),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+          body: Column(
+            children: <Widget>[
+              Expanded(
+                child: TabBarView(
+                  children: categorias.map((categoria) {
+                    return FutureBuilder(
+                      future: apiService.getProductos(),
+                      builder: (context, snapshot) {
+                        if(snapshot.connectionState == ConnectionState.done) {
+                          final List<Productos> productos = snapshot.data!;
+                          final productosFiltrados = productos.where((producto) => producto.categoria == categoria.idCategoria).toList();
+                          return Container(
+                            padding: EdgeInsets.all(5),
+                            child: GridView.builder(
+                              itemCount: productosFiltrados.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 5,
+                                mainAxisSpacing: 2,
+                              ),
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => PantallaDetalles(productosD: productosFiltrados[index]),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Image.network(
+                                          productosFiltrados[index].imagen ?? 'Imagen no disponible',
+                                          height: 90,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Text(productosFiltrados[index].nombre ?? 'Nombre no disponible'),
+                                        Text('Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
             ],
           ),
-          actions: <Widget>[
-            new Stack(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.shopping_cart), 
-                onPressed: (){
-                  if(carrito.numeroProductos == 0){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Agrega un producto"),
-                      ),
-                    );
-                  } else {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext) => PantallaCarrito()
-                      ));
-                  }
-                }
-              ),
-              new Positioned(
-                top: 6,
-                right: 6,
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: new BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(4)),
-                    constraints: BoxConstraints(
-                      minWidth: 14,
-                      minHeight: 14
-                    ),
-                  child: Text(
-                    carrito.numeroProductos.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                    color: Colors.white, 
-                    fontSize: 9
-                  ),),
-                ),
-              ),
-            ],
-          )
-          ],
         ),
-        body: TabBarView(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(5),
-              child: GridView.builder(
-                itemCount: productos.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  //childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.5),
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 2,
-                ),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      // Navega a la pantalla de detalles del producto y pasa el objeto 'menuItems'
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          //builder: (context) => PantallaDetalles((Productos): productos), // Pasa el objeto menuItems
-                          builder: (context) => PantallaDetalles(productosD: productos[index]),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10)
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Image.network(
-                            productos[index].imagen ?? 'Imagen no disponible',
-                            
-                            height: 90, // Altura máxima
-                            width: double.infinity, // Ancho máximo (puede ajustarlo según sus necesidades)
-                            fit: BoxFit.cover, // Ajuste la imagen para que cubra el espacio disponible
-                          ),
-                          Text(productos[index].nombre ?? 'Nombre no disponible'),
-                          //Text(productos[index].categoria ?? 'Categoria no disponible'),
-                          Text('Bs ${productos[index].precio ?? 'Precio no disponible'}'),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              child: Text("Guarniciones"),
-            ),
-            Container(
-              child: Text("Gaseosas y jugos"),
-            ),
-            Container(
-              child: Text("Aperitivos"),
-            ),
-          ],
-        ),
-      ),
-    );
+      );
     });
   }
 }

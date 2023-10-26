@@ -27,6 +27,8 @@ class MyApp extends StatelessWidget {
         ),
         home: PantallaInicioBotones()
         //home: PantallaLogin(),
+        //home: LoginScreen()
+        //home: PantallaMenuNueva()
     );
   }
 }

@@ -1,15 +1,9 @@
-import 'package:json_annotation/json_annotation.dart';
+class ModelLogin {
+  final String mensaje;
 
-part 'modelLogin.g.dart';
+  ModelLogin({required this.mensaje});
 
-@JsonSerializable()
-class LoginResponse {
-  bool success;
-
-  LoginResponse({required this.success});
-
-  factory LoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$LoginResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
+  factory ModelLogin.fromJson(Map<String, dynamic> json) {
+    return ModelLogin(mensaje: json['mensaje']);
+  }
 }
