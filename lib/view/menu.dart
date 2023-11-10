@@ -13,8 +13,6 @@ import 'package:proyectomovil/view/carrito_pantalla.dart';
 class PantallaMenu extends StatelessWidget {
   const PantallaMenu({Key? key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +47,12 @@ class PantallaMenu extends StatelessWidget {
             backgroundColor: Colors.amber,
             elevation: 0,
             bottom: TabBar(
-                labelColor: Colors.red,
-                indicatorColor: Colors.red,
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: categorias.map((categoria) => Tab(child: Text(categoria.nombre ?? 'Nombre no disponible'))).toList(),
-              ),
+              isScrollable: true, // Esto permite desplazarse horizontalmente
+              labelColor: Colors.red,
+              indicatorColor: Colors.red,
+              indicatorSize: TabBarIndicatorSize.label,
+              tabs: categorias.map((categoria) => Tab(child: Text(categoria.nombre ?? 'Nombre no disponible'))).toList(),
+            ),
             actions: <Widget>[
               new Stack(
                 children: <Widget>[
@@ -89,79 +88,74 @@ class PantallaMenu extends StatelessWidget {
                         carrito.numeroProductos.toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: 9
-                      ),),
+                          color: Colors.white, 
+                          fontSize: 9
+                        ),
+                      ),
                     ),
                   ),
                 ],
               )
             ],
           ),
-          body: Column(
-            children: <Widget>[
-              Expanded(
-                child: TabBarView(
-                  children: categorias.map((categoria) {
-                    return FutureBuilder(
-                      future: apiService.getProductos(),
-                      builder: (context, snapshot) {
-                        if(snapshot.connectionState == ConnectionState.done) {
-                          final List<Productos> productos = snapshot.data!;
-                          final productosFiltrados = productos.where((producto) => producto.categoria == categoria.idCategoria).toList();
-                          return Container(
-                            padding: EdgeInsets.all(5),
-                            child: GridView.builder(
-                              itemCount: productosFiltrados.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 2,
+          body: TabBarView(
+            children: categorias.map((categoria) {
+              return FutureBuilder(
+                future: apiService.getProductos(),
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.done) {
+                    final List<Productos> productos = snapshot.data!;
+                    final productosFiltrados = productos.where((producto) => producto.categoria == categoria.idCategoria).toList();
+                    return Container(
+                      padding: EdgeInsets.all(5),
+                      child: GridView.builder(
+                        itemCount: productosFiltrados.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 2,
+                        ),
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => PantallaDetalles(productosD: productosFiltrados[index]),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(10)
                               ),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => PantallaDetalles(productosD: productosFiltrados[index]),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.all(10),
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Image.network(
-                                          productosFiltrados[index].imagen ?? 'Imagen no disponible',
-                                          height: 90,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Text(productosFiltrados[index].nombre ?? 'Nombre no disponible'),
-                                        Text('Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
-                                      ],
-                                    ),
+                              child: Column(
+                                children: <Widget>[
+                                  Image.network(
+                                    productosFiltrados[index].imagen ?? 'Imagen no disponible',
+                                    height: 90,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
                                   ),
-                                );
-                              },
+                                  Text(productosFiltrados[index].nombre ?? 'Nombre no disponible'),
+                                  Text('Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
+                                ],
+                              ),
                             ),
                           );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
+                        },
+                      ),
                     );
-                  }).toList(),
-                ),
-              ),
-            ],
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              );
+            }).toList(),
           ),
         ),
       );

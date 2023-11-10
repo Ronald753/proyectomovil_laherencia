@@ -1,166 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:proyectomovil/model/modelCategorias.dart';
-import 'package:proyectomovil/model/modelProductos.dart'; 
-import 'package:proyectomovil/service/api_service.dart';
 import 'package:dio/dio.dart';
-import 'package:proyectomovil/view/detalles.dart';
-import 'package:provider/provider.dart';
-import 'package:proyectomovil/model/Carrito.dart';
-import 'package:proyectomovil/view/carrito_pantalla.dart';
+import 'package:proyectomovil/service/api_service.dart';
 
-class PantallaMenuNueva extends StatelessWidget {
-  const PantallaMenuNueva({Key? key});
+class Recuperar extends StatefulWidget {
+  @override
+  _RecuperarState createState() => _RecuperarState();
+}
+
+class _RecuperarState extends State<Recuperar> {
+  final Dio dio = Dio(); // Puedes configurar Dio según tus necesidades
+
+  final resetPasswordService = ApiService(Dio()); // La interfaz para el servicio de reseteo de contraseña
+
+  TextEditingController emailController = TextEditingController();
+
+  void sendResetPasswordEmail() async {
+  final email = emailController.text.trim();
+
+  if (email.isNotEmpty) {
+    try {
+      await resetPasswordService.sendResetPasswordEmail(email);
+
+      // Mostrar un mensaje de éxito al usuario
+      print('Correo de reseteo enviado con éxito');
+    } catch (e) {
+      print('Error en la solicitud: $e');
+      // Mostrar un mensaje de error al usuario si la solicitud falla.
+    }
+  } else {
+    // Mostrar un mensaje indicando que el campo de correo electrónico está vacío.
+  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _body(),
-    );
-  }
-
-  FutureBuilder _body() {
-    final apiService = ApiService(Dio(BaseOptions(contentType: "application/json")));
-    return FutureBuilder(
-      future: apiService.getCategorias(),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.done) {
-          final List<Categorias> categorias = snapshot.data!;
-          return _categoriasTabView(categorias, apiService);
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _categoriasTabView(List<Categorias> categorias, ApiService apiService) {
-    return Consumer<Carrito>(builder: (context, carrito, child){
-      return DefaultTabController(
-        length: categorias.length,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text("Menu"),
-            backgroundColor: Colors.amber,
-            elevation: 0,
-            bottom: TabBar(
-                labelColor: Colors.red,
-                indicatorColor: Colors.red,
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: categorias.map((categoria) => Tab(child: Text(categoria.nombre ?? 'Nombre no disponible'))).toList(),
+      appBar: AppBar(
+        title: Text('Recuperar Contraseña'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: 'Correo Electrónico',
               ),
-            actions: <Widget>[
-              new Stack(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.shopping_cart), 
-                    onPressed: (){
-                      if(carrito.numeroProductos == 0){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Agrega un producto"),
-                          ),
-                        );
-                      } else {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext) => PantallaCarrito()
-                          ));
-                      }
-                    }
-                  ),
-                  new Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: new BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(4)),
-                        constraints: BoxConstraints(
-                          minWidth: 14,
-                          minHeight: 14
-                        ),
-                      child: Text(
-                        carrito.numeroProductos.toString(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: 9
-                      ),),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-          body: Column(
-            children: <Widget>[
-              Expanded(
-                child: TabBarView(
-                  children: categorias.map((categoria) {
-                    return FutureBuilder(
-                      future: apiService.getProductos(),
-                      builder: (context, snapshot) {
-                        if(snapshot.connectionState == ConnectionState.done) {
-                          final List<Productos> productos = snapshot.data!;
-                          final productosFiltrados = productos.where((producto) => producto.categoria == categoria.idCategoria).toList();
-                          return Container(
-                            padding: EdgeInsets.all(5),
-                            child: GridView.builder(
-                              itemCount: productosFiltrados.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 2,
-                              ),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => PantallaDetalles(productosD: productosFiltrados[index]),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.all(10),
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Image.network(
-                                          productosFiltrados[index].imagen ?? 'Imagen no disponible',
-                                          height: 90,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Text(productosFiltrados[index].nombre ?? 'Nombre no disponible'),
-                                        Text('Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                sendResetPasswordEmail();
+              },
+              child: Text('Enviar Correo de Reseteo'),
+            ),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 }

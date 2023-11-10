@@ -37,24 +37,25 @@ class _PantallaLoginState extends State<PantallaLogin> {
   Future<void> _login() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    final idCliente = 'MR9345210';
-      guardarIdUsuario(idCliente);
 
     try {
       final response = await apiService.loginMovil(email, password);
-      print(response);
+      final loginResponse = LoginResponse.fromJson(response.toJson());
 
-      if (response == true) {
-      // Inicio de sesión exitoso, hacer algo (por ejemplo, navegar a otra pantalla)
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PantallaInicioBotones()));
-    } else {
-      // Inicio de sesión fallido, mostrar un mensaje de error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Credenciales incorrectas. Por favor, intenta de nuevo.'),
-        ),
-      );
-    }
+      if (loginResponse.status) {
+        // Inicio de sesión exitoso, hacer algo (por ejemplo, navegar a otra pantalla)
+        final idCliente = loginResponse.idPersona;
+        guardarIdUsuario(idCliente);
+        print('ID del Usuario: $idCliente');
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PantallaInicioBotones()));
+      } else {
+        // Inicio de sesión fallido, mostrar un mensaje de error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Credenciales incorrectas. Por favor, intenta de nuevo.'),
+          ),
+        );
+      }
 
       // ... tu lógica de manejo de respuesta aquí ...
     } catch (error) {
