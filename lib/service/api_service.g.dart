@@ -166,7 +166,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<void> sendResetPasswordEmail(String email) async {
+  Future<void> restaurarPassword(String email) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'email': email};
     final _headers = <String, dynamic>{};
@@ -187,6 +187,62 @@ class _ApiService implements ApiService {
           _dio.options.baseUrl,
           baseUrl,
         ))));
+  }
+
+  @override
+  Future<Persona> obtenerPersona(String id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Persona>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/personas/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = Persona.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<List<PedidosCliente>> getPedidosByUserId(String userId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<PedidosCliente>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/pedidos/user/${userId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var value = _result.data!
+        .map((dynamic i) => PedidosCliente.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

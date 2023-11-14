@@ -5,12 +5,10 @@ import 'package:proyectomovil/view/inicio_botones.dart';
 import 'package:proyectomovil/view/login.dart';
 import 'package:proyectomovil/view/pruebaapi.dart';
 
-void main() => runApp(
-  ChangeNotifierProvider(
+void main() => runApp(ChangeNotifierProvider(
       create: (context) => Carrito(),
       child: MyApp(),
-    )
-);
+    ));
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -29,6 +27,6 @@ class MyApp extends StatelessWidget {
         //home: PantallaLogin(),
         //home: LoginScreen()
         //home: Recuperar(),
-    );
+        );
   }
 }

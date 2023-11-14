@@ -9,28 +9,28 @@ class Recuperar extends StatefulWidget {
 
 class _RecuperarState extends State<Recuperar> {
   final Dio dio = Dio(); // Puedes configurar Dio según tus necesidades
-
-  final resetPasswordService = ApiService(Dio()); // La interfaz para el servicio de reseteo de contraseña
+  final restaurarPasswordEmail = ApiService(Dio()); // La interfaz para el servicio de reseteo de contraseña
 
   TextEditingController emailController = TextEditingController();
 
   void sendResetPasswordEmail() async {
-  final email = emailController.text.trim();
+    final email = emailController.text.trim();
 
-  if (email.isNotEmpty) {
-    try {
-      await resetPasswordService.sendResetPasswordEmail(email);
+    if (email.isNotEmpty) {
+      try {
+        await restaurarPasswordEmail.restaurarPassword(email);
 
-      // Mostrar un mensaje de éxito al usuario
-      print('Correo de reseteo enviado con éxito');
-    } catch (e) {
-      print('Error en la solicitud: $e');
-      // Mostrar un mensaje de error al usuario si la solicitud falla.
+        // Mostrar un mensaje de éxito al usuario
+        print('Correo de reseteo enviado con éxito.');
+      } catch (e) {
+        print('Error en la solicitud: $e');
+        // Mostrar un mensaje de error al usuario si la solicitud falla.
+      }
+    } else {
+      // Mostrar un mensaje indicando que el campo de correo electrónico está vacío.
+      print('Ingrese un correo electronico');
     }
-  } else {
-    // Mostrar un mensaje indicando que el campo de correo electrónico está vacío.
   }
-}
 
   @override
   Widget build(BuildContext context) {

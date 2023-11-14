@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyectomovil/model/modelPersona.dart';
 import 'package:proyectomovil/service/api_service.dart';
 import 'package:dio/dio.dart';
+import 'package:proyectomovil/view/login.dart';
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({Key? key}) : super(key: key);
@@ -153,6 +154,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
       // Manejar la respuesta del servidor según tus necesidades
       print('Respuesta del servidor: ${response.toJson()}');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cuenta creada con exito.'),
+          ),
+        );
+      Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PantallaLogin()));
 
       // Puedes agregar más lógica aquí, por ejemplo, mostrar un mensaje de éxito o redireccionar a otra pantalla
     } catch (e) {

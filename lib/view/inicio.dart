@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proyectomovil/view/menu.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PantallaInicio extends StatefulWidget {
   const PantallaInicio({super.key});
@@ -9,6 +9,20 @@ class PantallaInicio extends StatefulWidget {
 }
 
 class _PantallaInicioState extends State<PantallaInicio> {
+  final double latitude = -16.452978;
+  final double longitude = -68.137123;
+
+  void openGoogleMaps() async {
+    final String googleMapsUrl = 'https://www.google.com/maps/?q=$latitude,$longitude';
+     final Uri uri = Uri.parse(googleMapsUrl);
+    if (await canLaunchUrl(uri)) {
+      await launch(googleMapsUrl);
+    } else {
+      // No se puede abrir el navegador
+      print('No se pudo abrir el navegador');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +37,10 @@ class _PantallaInicioState extends State<PantallaInicio> {
             Image.network(
               "https://storage.googleapis.com/primerstorage/20230908_020308_logochurrasqueria.jpg", // Ruta de tu logo
               fit: BoxFit.fill, // Altura deseada del logo
+            ),
+            ElevatedButton(
+              onPressed: openGoogleMaps,
+              child: Text("Abrir Google Maps"),
             ),
           ],
         ),

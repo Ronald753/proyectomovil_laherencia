@@ -13,6 +13,7 @@ class PantallaCarrito extends StatefulWidget {
 }
 
 class _PantallaCarritoState extends State<PantallaCarrito> {
+  TextEditingController _cuponController = TextEditingController();
 
   Future<String?> obtenerIdUsuario() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,47 +36,81 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
   }
 
   void _mostrarVentanaEmergente(BuildContext context, Carrito carrito) {
+    String _cupon = "";
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmar Pedido'),
-          content: Text('¿Estás seguro de que deseas enviar el pedido?'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Si dispones de un cupón, introdúcelo a continuación. Si el cupón es válido, se aplicará un descuento.',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: _cuponController,
+                  decoration: InputDecoration(
+                    labelText: 'Cupón',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 16),
+                /*ElevatedButton(
+                  onPressed: () {
+                    _cupon = _cuponController.text;
+                    bool cuponValido = true; // Cambia esto con la lógica real
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'El cupón "$_cupon" es ${cuponValido ? 'válido' : 'inválido'}.',
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text('Verificar'),
+                ),*/
+                SizedBox(height: 16),
+                Text('¿Deseas enviar el pedido?'),
+              ],
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar'),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra la ventana emergente
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Enviar'),
               onPressed: () async {
+                _cupon = _cuponController.text;
                 String idCliente = (await obtenerIdUsuario()) ?? '';
-                // Crea un objeto Pedido usando los datos del carrito
                 final pedido = Pedido(
                   idCliente: idCliente,
                   productos: carrito.items.values.map((item) {
                     return ProductoPedido(
                         idProducto: item.id, cantidad: item.cantidad);
                   }).toList(),
+                  cupon: _cupon,
                 );
 
-                // Llama al método para enviar el pedido
                 _enviarPedido(pedido);
 
-                // Muestra un mensaje de Snackbar informando que el pedido fue enviado
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Pedido enviado'),
+                    content: Text('Pedido enviado. Cupón: $_cupon'),
                   ),
                 );
 
-                // Limpia el carrito
                 carrito.removeCarrito();
-                print(pedido);
 
-                // Cierra la ventana emergente y la vista actual
                 Navigator.of(context).pop();
               },
             ),
@@ -84,6 +119,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

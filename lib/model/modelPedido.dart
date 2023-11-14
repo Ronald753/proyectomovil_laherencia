@@ -1,10 +1,13 @@
+
 class Pedido {
   final String idCliente;
   final List<ProductoPedido> productos;
+  final String cupon;  // Nuevo campo
 
   Pedido({
     required this.idCliente,
     required this.productos,
+    required this.cupon,  // Nuevo campo
   });
 
   factory Pedido.fromJson(Map<String, dynamic> json) {
@@ -18,6 +21,7 @@ class Pedido {
     return Pedido(
       idCliente: json['id_cliente'],
       productos: productos,
+      cupon: json['cupon'],  // Nuevo campo
     );
   }
 
@@ -25,6 +29,7 @@ class Pedido {
     return {
       'id_cliente': idCliente,
       'productos': productos.map((producto) => producto.toJson()).toList(),
+      'cupon': cupon,  // Nuevo campo
     };
   }
 }

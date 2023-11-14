@@ -8,7 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:proyectomovil/model/Carrito.dart';
 import 'package:proyectomovil/view/carrito_pantalla.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PantallaMenu extends StatelessWidget {
   const PantallaMenu({Key? key});
@@ -16,18 +16,24 @@ class PantallaMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _body(),
+      body: _body(context),
     );
   }
 
-  FutureBuilder _body() {
-    final apiService = ApiService(Dio(BaseOptions(contentType: "application/json")));
+  Future<String?> obtenerIdUsuario() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('idUsuario');
+  }
+
+  FutureBuilder _body(BuildContext context) {
+    final apiService =
+        ApiService(Dio(BaseOptions(contentType: "application/json")));
     return FutureBuilder(
       future: apiService.getCategorias(),
       builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.connectionState == ConnectionState.done) {
           final List<Categorias> categorias = snapshot.data!;
-          return _categoriasTabView(categorias, apiService);
+          return _categoriasTabView(categorias, apiService, context);
         } else {
           return Center(
             child: CircularProgressIndicator(),
@@ -37,8 +43,9 @@ class PantallaMenu extends StatelessWidget {
     );
   }
 
-  Widget _categoriasTabView(List<Categorias> categorias, ApiService apiService) {
-    return Consumer<Carrito>(builder: (context, carrito, child){
+  Widget _categoriasTabView(
+      List<Categorias> categorias, ApiService apiService, BuildContext context) {
+    return Consumer<Carrito>(builder: (context, carrito, child) {
       return DefaultTabController(
         length: categorias.length,
         child: Scaffold(
@@ -47,30 +54,23 @@ class PantallaMenu extends StatelessWidget {
             backgroundColor: Colors.amber,
             elevation: 0,
             bottom: TabBar(
-              isScrollable: true, // Esto permite desplazarse horizontalmente
+              isScrollable: true,
               labelColor: Colors.red,
               indicatorColor: Colors.red,
               indicatorSize: TabBarIndicatorSize.label,
-              tabs: categorias.map((categoria) => Tab(child: Text(categoria.nombre ?? 'Nombre no disponible'))).toList(),
+              tabs: categorias
+                  .map((categoria) => Tab(
+                      child: Text(categoria.nombre ?? 'Nombre no disponible')))
+                  .toList(),
             ),
             actions: <Widget>[
               new Stack(
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(Icons.shopping_cart), 
-                    onPressed: (){
-                      if(carrito.numeroProductos == 0){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Agrega un producto"),
-                          ),
-                        );
-                      } else {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext) => PantallaCarrito()
-                          ));
-                      }
-                    }
+                    icon: Icon(Icons.shopping_cart),
+                    onPressed: () {
+                      verificarSesionYAccederCarrito(context, carrito);
+                    },
                   ),
                   new Positioned(
                     top: 6,
@@ -78,19 +78,13 @@ class PantallaMenu extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(2),
                       decoration: new BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(4)),
-                        constraints: BoxConstraints(
-                          minWidth: 14,
-                          minHeight: 14
-                        ),
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(4)),
+                      constraints: BoxConstraints(minWidth: 14, minHeight: 14),
                       child: Text(
                         carrito.numeroProductos.toString(),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontSize: 9
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 9),
                       ),
                     ),
                   ),
@@ -103,9 +97,12 @@ class PantallaMenu extends StatelessWidget {
               return FutureBuilder(
                 future: apiService.getProductos(),
                 builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.connectionState == ConnectionState.done) {
                     final List<Productos> productos = snapshot.data!;
-                    final productosFiltrados = productos.where((producto) => producto.categoria == categoria.idCategoria).toList();
+                    final productosFiltrados = productos
+                        .where((producto) =>
+                            producto.categoria == categoria.idCategoria)
+                        .toList();
                     return Container(
                       padding: EdgeInsets.all(5),
                       child: GridView.builder(
@@ -120,7 +117,8 @@ class PantallaMenu extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => PantallaDetalles(productosD: productosFiltrados[index]),
+                                  builder: (context) => PantallaDetalles(
+                                      productosD: productosFiltrados[index]),
                                 ),
                               );
                             },
@@ -128,19 +126,21 @@ class PantallaMenu extends StatelessWidget {
                               margin: EdgeInsets.all(10),
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(10)
-                              ),
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(10)),
                               child: Column(
                                 children: <Widget>[
                                   Image.network(
-                                    productosFiltrados[index].imagen ?? 'Imagen no disponible',
+                                    productosFiltrados[index].imagen ??
+                                        'Imagen no disponible',
                                     height: 90,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
                                   ),
-                                  Text(productosFiltrados[index].nombre ?? 'Nombre no disponible'),
-                                  Text('Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
+                                  Text(productosFiltrados[index].nombre ??
+                                      'Nombre no disponible'),
+                                  Text(
+                                      'Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
                                 ],
                               ),
                             ),
@@ -160,5 +160,30 @@ class PantallaMenu extends StatelessWidget {
         ),
       );
     });
+  }
+
+  void verificarSesionYAccederCarrito(BuildContext context, Carrito carrito) async {
+    final idUsuario = await obtenerIdUsuario();
+    if (idUsuario != null) {
+      if (carrito.numeroProductos == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Agrega un producto"),
+          ),
+        );
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext) => PantallaCarrito(),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Inicia sesión para acceder al carrito."),
+        ),
+      );
+    }
   }
 }
