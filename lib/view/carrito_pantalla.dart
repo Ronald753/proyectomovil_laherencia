@@ -22,7 +22,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
 
   Future<void> _enviarPedido(Pedido pedido) async {
     final apiService = ApiService(Dio());
-
+ 
     try {
       // Envía el pedido a la API usando el método enviarPedido de ApiService
       await apiService.enviarPedido(pedido);

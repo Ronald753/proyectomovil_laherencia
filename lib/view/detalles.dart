@@ -95,7 +95,88 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
                   agregarAlCarrito(context, carrito);
                 },
                 child: Text("Agregar al Carrito"),
-              )
+              ),
+
+              /*
+              //Calificar productos
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Calificar Producto"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Por favor, califica este producto:"),
+                            RatingBar.builder(
+                              initialRating: puntuacion ?? 1,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: false,
+                              itemCount: 5,
+                              itemSize: 40,
+                              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (rating) {
+                                setState(() {
+                                  puntuacion = rating;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Cierra la ventana emergente
+                            },
+                            child: Text("Cancelar"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final rating = puntuacion;
+                              final userId = 'ID_DEL_USUARIO_AQUI'; // Reemplaza con el ID del usuario actual
+
+                              try {
+                                final apiService = ApiService(Dio()); // Crea una instancia de ApiService
+
+                                // Crea un mapa con el ID de usuario y la puntuación
+                                final puntuacionData = {'usuarioId': userId, 'puntuacion': rating};
+
+                                /*
+                                // Llama al método para actualizar la puntuación en la API
+                                await apiService.updateProducto(
+                                  widget.productosD.id.toString(), // ID del producto
+                                  puntuacionData, // Datos de la puntuación con ID de usuario
+                                );*/
+
+                                // Puedes manejar la respuesta del servidor si es necesario
+
+                                Navigator.of(context).pop(); // Cierra la ventana emergente
+                              } catch (error) {
+                                // Maneja cualquier error que pueda ocurrir durante la solicitud de actualización
+                                print('Error al actualizar la puntuación: $error');
+                                // Puedes mostrar un mensaje de error al usuario si es necesario
+                              }
+                            },
+                            child: Text("Aceptar"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Text("Calificar Producto"),
+              ),
+              */
+
+
+
             ],
           ),
         ),
@@ -147,8 +228,9 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
               Text('Debes iniciar sesión para agregar productos al carrito.'),
         ),
       );
+      /*
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => PantallaLogin()));
+          context, MaterialPageRoute(builder: (context) => PantallaLogin()));*/
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyectomovil/model/modelPersona.dart';
 import 'package:proyectomovil/service/api_service.dart';
 import 'package:dio/dio.dart';
+import 'package:proyectomovil/view/inicio_botones.dart';
 import 'package:proyectomovil/view/login.dart';
 
 class PantallaRegistro extends StatefulWidget {
@@ -114,7 +115,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     return 'La contraseña debe tener al menos 6 caracteres';
                   }
                   if (!RegExp(r'^(?=.*?[a-zA-Z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{6,}$').hasMatch(value)) {
-                    return 'La contraseña debe contener al menos un número, una letra y un carácter especial';
+                    return 'La contraseña debe contener números, letras y un carácter especial';
                   }
                   return null;
                 },
@@ -162,12 +163,17 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PantallaLogin()));
+                        builder: (context) => PantallaInicioBotones()));
 
       // Puedes agregar más lógica aquí, por ejemplo, mostrar un mensaje de éxito o redireccionar a otra pantalla
     } catch (e) {
       // Manejar errores, por ejemplo, mostrar un mensaje de error al usuario
       print('Error al crear la persona: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al crear la cuenta.'),
+          ),
+        );
     }
   }
 }

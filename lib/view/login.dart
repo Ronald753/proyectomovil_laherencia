@@ -7,6 +7,7 @@ import 'package:proyectomovil/service/api_service.dart';
 import 'package:proyectomovil/model/modelLogin.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:proyectomovil/model/modelResetPass.dart';
 
 class PantallaLogin extends StatefulWidget {
   const PantallaLogin({Key? key});
@@ -75,11 +76,18 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
     if (email.isNotEmpty) {
       try {
-        await apiService.restaurarPassword(email);
+        //await apiService.restaurarPassword(email);
+
+        ResetPasswordResponse response = await apiService.genResetPassLink(email);
 
         // Mostrar un mensaje de éxito al usuario
         print('Correo de reseteo enviado con éxito');
         Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Correo de reseteo enviado con éxito'),
+        ),
+      );
       } catch (e) {
         print('Error en la solicitud: $e');
         // Mostrar un mensaje de error al usuario si la solicitud falla.

@@ -13,10 +13,17 @@ class _PantallaInicioState extends State<PantallaInicio> {
   final double longitude = -68.137123;
 
   void openGoogleMaps() async {
-    final String googleMapsUrl = 'https://www.google.com/maps/?q=$latitude,$longitude';
-     final Uri uri = Uri.parse(googleMapsUrl);
+    final String googleMapsUrl =
+        'https://www.google.com/maps/?q=$latitude,$longitude';
+    final Uri uri = Uri.parse(googleMapsUrl);
+    uri.queryParameters['app'] = 'com.google.android.apps.maps';
+
+    final Uri mutableUri = Uri.parse(googleMapsUrl);
+    mutableUri.queryParameters['app'] = 'com.google.android.apps.maps';
+    await launchUrl(mutableUri);
+
     if (await canLaunchUrl(uri)) {
-      await launch(googleMapsUrl);
+      await launch(uri.toString());
     } else {
       // No se puede abrir el navegador
       print('No se pudo abrir el navegador');
@@ -38,10 +45,11 @@ class _PantallaInicioState extends State<PantallaInicio> {
               "https://storage.googleapis.com/primerstorage/20230908_020308_logochurrasqueria.jpg", // Ruta de tu logo
               fit: BoxFit.fill, // Altura deseada del logo
             ),
+            /*
             ElevatedButton(
               onPressed: openGoogleMaps,
               child: Text("Abrir Google Maps"),
-            ),
+            ),*/
           ],
         ),
       ),
