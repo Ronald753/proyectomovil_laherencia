@@ -31,8 +31,8 @@ class _PantallaInicioBotonesState extends State<PantallaInicioBotones> {
             _currentPage = index;
           });
         },
-        unselectedItemColor: Colors.grey, // Color para íconos no seleccionados
-        selectedItemColor: Colors.purple, // Color para ícono seleccionado
+        unselectedItemColor: Colors.black, // Color para íconos no seleccionados
+        selectedItemColor: Colors.red, // Color para ícono seleccionado
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

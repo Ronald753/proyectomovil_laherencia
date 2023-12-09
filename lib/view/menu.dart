@@ -43,20 +43,25 @@ class PantallaMenu extends StatelessWidget {
     );
   }
 
-  Widget _categoriasTabView(
-      List<Categorias> categorias, ApiService apiService, BuildContext context) {
+  Widget _categoriasTabView(List<Categorias> categorias, ApiService apiService,
+      BuildContext context) {
     return Consumer<Carrito>(builder: (context, carrito, child) {
       return DefaultTabController(
         length: categorias.length,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Menu"),
-            backgroundColor: Colors.amber,
+            title: Text(
+              "Menu",
+              style: TextStyle(
+                color: Colors.black, // Cambia el color de la letra aquí
+              ),
+            ),
+            backgroundColor: Colors.red,
             elevation: 0,
             bottom: TabBar(
               isScrollable: true,
-              labelColor: Colors.red,
-              indicatorColor: Colors.red,
+              labelColor: Colors.black,
+              indicatorColor: Colors.black,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: categorias
                   .map((categoria) => Tab(
@@ -68,6 +73,8 @@ class PantallaMenu extends StatelessWidget {
                 children: <Widget>[
                   IconButton(
                     icon: Icon(Icons.shopping_cart),
+                    iconSize: 30,
+                    color: Colors.black,
                     onPressed: () {
                       verificarSesionYAccederCarrito(context, carrito);
                     },
@@ -78,13 +85,16 @@ class PantallaMenu extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(2),
                       decoration: new BoxDecoration(
-                          color: Colors.red,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(4)),
                       constraints: BoxConstraints(minWidth: 14, minHeight: 14),
                       child: Text(
                         carrito.numeroProductos.toString(),
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 9),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -137,10 +147,21 @@ class PantallaMenu extends StatelessWidget {
                                     width: double.infinity,
                                     fit: BoxFit.cover,
                                   ),
-                                  Text(productosFiltrados[index].nombre ??
-                                      'Nombre no disponible'),
                                   Text(
-                                      'Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}'),
+                                    productosFiltrados[index].nombre ??
+                                        'Nombre no disponible',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Bs ${productosFiltrados[index].precio ?? 'Precio no disponible'}',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -162,7 +183,8 @@ class PantallaMenu extends StatelessWidget {
     });
   }
 
-  void verificarSesionYAccederCarrito(BuildContext context, Carrito carrito) async {
+  void verificarSesionYAccederCarrito(
+      BuildContext context, Carrito carrito) async {
     final idUsuario = await obtenerIdUsuario();
     if (idUsuario != null) {
       if (carrito.numeroProductos == 0) {

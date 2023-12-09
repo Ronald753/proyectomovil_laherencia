@@ -45,8 +45,12 @@ class PantallaPedidos extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis Pedidos'),
-        backgroundColor: Colors.amber,
+        title: Text('Mis Pedidos',
+          style: TextStyle(
+            color: Colors.white, // Cambia el color de la letra aquí
+          ),
+        ),
+        backgroundColor: Colors.black,
       ),
       body: FutureBuilder<String?>(
         future: obtenerIdUsuario(),

@@ -9,7 +9,7 @@ import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 part 'api_service.g.dart';
 
-@RestApi(baseUrl: 'https://herencia-api.onrender.com')
+@RestApi(baseUrl: 'https://seahorse-app-4vvf3.ondigitalocean.app')
 abstract class ApiService {
   factory ApiService(Dio dio) = _ApiService;
 

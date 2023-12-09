@@ -34,8 +34,14 @@ class _PantallaInicioState extends State<PantallaInicio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Inicio"),
-        backgroundColor: Colors.amber,
+        title: Text("Inicio", 
+          style: TextStyle(
+            color: Colors.black, // Cambia el color de la letra aquí
+            //fontFamily: '',
+            fontWeight: FontWeight.bold
+          ),
+        ),
+        backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -82,6 +82,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
         // Mostrar un mensaje de éxito al usuario
         print('Correo de reseteo enviado con éxito');
+        
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -107,6 +108,12 @@ class _PantallaLoginState extends State<PantallaLogin> {
   Future<void> _login() async {
     final email = _emailController.text;
     final password = _passwordController.text;
+
+    // Verificar si los campos están vacíos
+    if (email.isEmpty || password.isEmpty) {
+      _mostrarMensajeError("Por favor, completa todos los campos.");
+      return;
+    }
 
     try {
       final response = await apiService.loginMovil(email, password);
@@ -140,6 +147,24 @@ class _PantallaLoginState extends State<PantallaLogin> {
         ),
       );
     }
+  }
+
+  void _mostrarMensajeError(String mensaje) {
+    String campoFaltante = 'campo';
+
+    if (_emailController.text.isEmpty) {
+      campoFaltante = 'Correo Electrónico';
+    } else if (_passwordController.text.isEmpty) {
+      campoFaltante = 'Contraseña';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: campoFaltante != 'campo'
+            ? Text('El campo $campoFaltante está vacío. Por favor, complétalo.')
+            : Text(mensaje),
+      ),
+    );
   }
 
   @override

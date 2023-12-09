@@ -49,13 +49,19 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
       return Scaffold(
         key: _globalKey,
         appBar: AppBar(
-          title: Text("Detalles del Producto"),
-          backgroundColor: Colors.amber,
+          title: Text("Detalles del Producto",
+            style: TextStyle(
+              color: Colors.black, // Cambia el color de la letra aquí
+            ),
+          ),
+          backgroundColor: Colors.red,
           actions: <Widget>[
             new Stack(
               children: <Widget>[
                 IconButton(
                     icon: Icon(Icons.shopping_cart),
+                    iconSize: 30,
+                    color: Colors.black,
                     onPressed: () {
                       verificarSesionYAccederCarrito(context, carrito);
                     }),
@@ -65,13 +71,13 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
                   child: Container(
                     padding: EdgeInsets.all(2),
                     decoration: new BoxDecoration(
-                        color: Colors.red,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(4)),
                     constraints: BoxConstraints(minWidth: 14, minHeight: 14),
                     child: Text(
                       carrito.numeroProductos.toString(),
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 9),
+                      style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -85,10 +91,27 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.network(widget.productosD.imagen ?? 'Imagen no disponible'),
-              Text(widget.productosD.nombre ?? 'Nombre no disponible'),
-              Text('Bs ${widget.productosD.precio ?? 'Precio no disponible'}'),
+              Text(widget.productosD.nombre ?? 'Nombre no disponible',
+              style: TextStyle(
+                  fontSize: 30, // Ajusta el tamaño de la letra aquí
+                  fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
+                  fontWeight: FontWeight.bold, // Puedes ajustar el peso de la fuente si lo deseas
+                ),
+              ),
+              Text('Bs ${widget.productosD.precio ?? 'Precio no disponible'}',
+                style: TextStyle(
+                  fontSize: 20, // Ajusta el tamaño de la letra aquí
+                  fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
               Text(
-                  widget.productosD.descripcion ?? 'Descripción no disponible'),
+                  widget.productosD.descripcion ?? 'Descripción no disponible',
+                    style: TextStyle(
+                      fontSize: 20, // Ajusta el tamaño de la letra aquí
+                      fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
+                    ),
+                  ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -96,87 +119,6 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
                 },
                 child: Text("Agregar al Carrito"),
               ),
-
-              /*
-              //Calificar productos
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Calificar Producto"),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Por favor, califica este producto:"),
-                            RatingBar.builder(
-                              initialRating: puntuacion ?? 1,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: false,
-                              itemCount: 5,
-                              itemSize: 40,
-                              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              ),
-                              onRatingUpdate: (rating) {
-                                setState(() {
-                                  puntuacion = rating;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Cierra la ventana emergente
-                            },
-                            child: Text("Cancelar"),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final rating = puntuacion;
-                              final userId = 'ID_DEL_USUARIO_AQUI'; // Reemplaza con el ID del usuario actual
-
-                              try {
-                                final apiService = ApiService(Dio()); // Crea una instancia de ApiService
-
-                                // Crea un mapa con el ID de usuario y la puntuación
-                                final puntuacionData = {'usuarioId': userId, 'puntuacion': rating};
-
-                                /*
-                                // Llama al método para actualizar la puntuación en la API
-                                await apiService.updateProducto(
-                                  widget.productosD.id.toString(), // ID del producto
-                                  puntuacionData, // Datos de la puntuación con ID de usuario
-                                );*/
-
-                                // Puedes manejar la respuesta del servidor si es necesario
-
-                                Navigator.of(context).pop(); // Cierra la ventana emergente
-                              } catch (error) {
-                                // Maneja cualquier error que pueda ocurrir durante la solicitud de actualización
-                                print('Error al actualizar la puntuación: $error');
-                                // Puedes mostrar un mensaje de error al usuario si es necesario
-                              }
-                            },
-                            child: Text("Aceptar"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Text("Calificar Producto"),
-              ),
-              */
-
-
-
             ],
           ),
         ),
