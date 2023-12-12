@@ -137,6 +137,9 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     color: Colors.black,
                   ),
                 ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 255, 147, 139) // Puedes cambiar "Colors.blue" al color que desees
+                ),
               ),
             ],
           ),

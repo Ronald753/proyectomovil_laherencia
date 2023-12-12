@@ -129,7 +129,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
 
   String cuponEnviado = '';
   
-  Future<void> getCuponPorCodigo() async {
+  Future<void> getCuponPorCodigo(Carrito carrito) async {
     final apiService = ApiService(Dio());
 
     try {
@@ -154,9 +154,12 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
           _cuponValido = true;
           cuponEnviado = _cupon;
           int descuentoPorcentaje= _cuponModel.porcentajeDescuento;
+          double descuentoPorcentajeFinal = descuentoPorcentaje / 100;
+          double precioFinalDescuento = carrito.montoTotal * descuentoPorcentajeFinal;
+          double precioFinal = carrito.montoTotal - precioFinalDescuento;
 
           _showOverlayMessage(
-            'El cupón $_cupon es válido. Tienes un descuento del $descuentoPorcentaje%',
+            'El cupón $_cupon es válido. Tienes un descuento del $descuentoPorcentaje% y el precio final de tu pedido es $precioFinal',
             false,
           );
         }
@@ -213,41 +216,16 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
 
                 ElevatedButton(
                   onPressed: () {
-                    getCuponPorCodigo(); // Llama a la función cuando se hace clic en el botón
+                    getCuponPorCodigo(carrito); // Llama a la función cuando se hace clic en el botón
                   },
-                  child: Text('Verificar cupón'),
+                  child: Text('Verificar cupón',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 255, 207, 204) // Puedes cambiar "Colors.blue" al color que desees
+                  ),
                 ),
-
-                /*
-                ElevatedButton(
-                onPressed: () {
-                  _cupon = _cuponController.text;
-
-                  // Aquí, deberías tener una lógica para validar el cupón y obtener su descuento
-                  bool cuponValido = true; // Cambia esto con la lógica real
-                  double descuentoCupon = cuponValido && cuponModel != null ? cuponModel.porcentajeDescuento / 100.0 : 0.0;
-
-                  // Calcula el precio total aplicando el descuento
-                  double precioTotalConDescuento = carrito.montoTotal * (1 - descuentoCupon);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'El cupón "$_cupon" es ${cuponValido ? 'válido' : 'inválido'}.',
-                      ),
-                    ),
-                  );
-
-                  // Actualiza el estado para reflejar el nuevo precio total con descuento
-                  setState(() {
-                    precioDescuento = precioTotalConDescuento;
-                  });
-                },
-                child: Text('Verificar'),
-              ),
-
-              Text("Total: " + "Bs " + precioDescuento.toString()),
-              */
 
                 SizedBox(height: 16),
                 Text('¿Deseas enviar el pedido?'),

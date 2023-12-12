@@ -51,7 +51,7 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
         appBar: AppBar(
           title: Text("Detalles del Producto",
             style: TextStyle(
-              color: Colors.black, // Cambia el color de la letra aquí
+              color: Colors.white, // Cambia el color de la letra aquí
             ),
           ),
           backgroundColor: Colors.red,
@@ -114,7 +114,15 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
                 onPressed: () {
                   agregarAlCarrito(context, carrito);
                 },
-                child: Text("Agregar al Carrito"),
+                child: Text("Agregar al Carrito",
+                style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 255, 147, 139) // Puedes cambiar "Colors.blue" al color que desees
+                ),
               ),
             ],
           ),
