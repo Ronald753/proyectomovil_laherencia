@@ -27,8 +27,12 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear Usuario'),
-        backgroundColor: Colors.amber,
+        title: Text('Crear Usuario',
+        style: TextStyle(
+          color: Colors.white,
+        ),
+        ),
+        backgroundColor: Colors.red,
       ),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
@@ -128,7 +132,11 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     _crearPersona();
                   }
                 },
-                child: Text('Crear Usuario'),
+                child: Text('Crear Usuario',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ],
           ),

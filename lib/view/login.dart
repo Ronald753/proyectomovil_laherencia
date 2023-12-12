@@ -62,7 +62,11 @@ class _PantallaLoginState extends State<PantallaLogin> {
                   _enviarCorreoReset();
                   //Navigator.of(context).pop(); // Cerrar la ventana emergente
                 },
-                child: Text('Enviar Correo de Reseteo'),
+                child: Text('Enviar Correo de Reseteo',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ],
           ),
@@ -78,17 +82,18 @@ class _PantallaLoginState extends State<PantallaLogin> {
       try {
         //await apiService.restaurarPassword(email);
 
-        ResetPasswordResponse response = await apiService.genResetPassLink(email);
+        ResetPasswordResponse response =
+            await apiService.genResetPassLink(email);
 
         // Mostrar un mensaje de éxito al usuario
         print('Correo de reseteo enviado con éxito');
-        
+
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Correo de reseteo enviado con éxito'),
-        ),
-      );
+          SnackBar(
+            content: Text('Correo de reseteo enviado con éxito'),
+          ),
+        );
       } catch (e) {
         print('Error en la solicitud: $e');
         // Mostrar un mensaje de error al usuario si la solicitud falla.
@@ -178,8 +183,13 @@ class _PantallaLoginState extends State<PantallaLogin> {
           } else {
             return Scaffold(
               appBar: AppBar(
-                title: Text("Iniciar sesión"),
-                backgroundColor: Colors.amber,
+                title: Text(
+                  "Iniciar sesión",
+                  style: TextStyle(
+                    color: Colors.white, // Ajusta el tamaño de la letra aquí
+                  ),
+                ),
+                backgroundColor: Colors.red,
               ),
               body: SingleChildScrollView(
                 child: Column(
@@ -213,7 +223,15 @@ class _PantallaLoginState extends State<PantallaLogin> {
                           SizedBox(height: 24.0),
                           ElevatedButton(
                             onPressed: _login,
-                            child: Text('Iniciar Sesión'),
+                            child: Text(
+                              'Iniciar Sesión',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(255, 255, 147, 139) // Puedes cambiar "Colors.blue" al color que desees
+                                ),
                           ),
                           SizedBox(height: 12.0),
                           TextButton(
@@ -224,12 +242,20 @@ class _PantallaLoginState extends State<PantallaLogin> {
                                       builder: (context) =>
                                           PantallaRegistro()));
                             },
-                            child: Text('Crear Cuenta'),
+                            child: Text('Crear Cuenta',
+                            style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                           SizedBox(height: 12.0),
                           TextButton(
                             onPressed: _mostrarVentanaEmergente,
-                            child: Text('¿Olvidaste tu contraseña?'),
+                            child: Text('¿Olvidaste tu contraseña?',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ],
                       ),

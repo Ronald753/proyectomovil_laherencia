@@ -36,9 +36,9 @@ class _PantallaInicioState extends State<PantallaInicio> {
       appBar: AppBar(
         title: Text("Inicio", 
           style: TextStyle(
-            color: Colors.black, // Cambia el color de la letra aquí
+            color: Colors.white, // Cambia el color de la letra aquí
             //fontFamily: '',
-            fontWeight: FontWeight.bold
+            //fontWeight: FontWeight.bold
           ),
         ),
         backgroundColor: Colors.red,

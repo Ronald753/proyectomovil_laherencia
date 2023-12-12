@@ -35,8 +35,12 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil'),
-        backgroundColor: Colors.amber,
+        title: Text('Perfil', 
+        style: TextStyle(
+              color: Colors.white, // Cambia el color de la letra aquí
+            ),
+        ),
+        backgroundColor: Colors.red,
       ),
       body: FutureBuilder<Persona>(
         future: _personaFuture,

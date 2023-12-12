@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyectomovil/model/Carrito.dart';
 import 'package:proyectomovil/model/modelPedido.dart';
 import 'package:proyectomovil/service/api_service.dart';
+import 'package:proyectomovil/model/modelCupon.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,14 +38,161 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
     }
   }
 
-  void _mostrarVentanaEmergente(BuildContext context, Carrito carrito) {
-    String _cupon = "";
 
+
+  String _tipoPedido = "";
+  void _mostrarVentanaEmergenteEnviar(BuildContext context, Carrito carrito) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmar Pedido'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '¿El pedido es para llevar?',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                //Text('¿Deseas enviar el pedido?'),
+              ],
+            ),
+          ),
+
+          actions: <Widget>[
+            /*
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: (){
+                Navigator.of(context).pop();
+              },
+            ),
+            */
+            TextButton(
+              child: Text('No'),
+              onPressed: () async {
+                _tipoPedido = 'Local';
+                Navigator.of(context).pop();
+                _mostrarVentanaEmergente(context, carrito);
+              },
+            ),
+            TextButton(
+              child: Text('Si'),
+              onPressed: () async {
+                _tipoPedido = 'Para llevar';
+                Navigator.of(context).pop();
+                _mostrarVentanaEmergente(context, carrito);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  bool _cuponValido = false;
+  OverlayEntry? _overlayEntry;
+
+  void _showOverlayMessage(String message, bool isError) {
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).size.height * 0.4,
+        width: MediaQuery.of(context).size.width,
+        child: Material(
+          color: Colors.transparent,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              decoration: BoxDecoration(
+                color: isError ? Colors.red : Colors.green,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                message,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context)?.insert(_overlayEntry!);
+
+    // Oculta el mensaje después de un tiempo (puedes ajustar según tus necesidades)
+    Future.delayed(Duration(seconds: 3), () {
+      _overlayEntry?.remove();
+    });
+  }
+
+  String cuponEnviado = '';
+  
+  Future<void> getCuponPorCodigo() async {
+    final apiService = ApiService(Dio());
+
+    try {
+      // Obtén el cupón del controlador (o de donde sea que esté definido)
+      String _cupon = _cuponController.text;
+
+      // Envía la solicitud a la API para obtener el modelo de cupón
+      CuponModel? _cuponModel = await apiService.getCuponPorCodigo(_cupon);
+
+      if (_cuponModel != null) {
+        // Verifica si el cupón es válido
+        if (_cuponModel.usosDisponibles == 0) {
+          // Cupón no disponible si usosDisponibles es igual a cero
+          _cuponValido = false;
+          cuponEnviado = '';
+          _showOverlayMessage(
+            'El cupón $_cupon no está disponible. Usos agotados.',
+            true,
+          );
+        } else {
+          // El cupón es válido
+          _cuponValido = true;
+          cuponEnviado = _cupon;
+          int descuentoPorcentaje= _cuponModel.porcentajeDescuento;
+
+          _showOverlayMessage(
+            'El cupón $_cupon es válido. Tienes un descuento del $descuentoPorcentaje%',
+            false,
+          );
+        }
+      } else {
+        // Manejar el caso donde el modelo de cupón es nulo
+        print('No se pudo obtener el modelo de cupón o el cupón no es válido');
+        _cuponValido = false;
+        cuponEnviado = '';
+        _showOverlayMessage(
+          'El cupón $_cupon no es válido.',
+          true,
+        );
+      }
+    } catch (error) {
+      // Manejar errores aquí, como mostrar un mensaje al usuario
+      print('Error al obtener el modelo de cupón: $error');
+      cuponEnviado = '';
+
+      // Muestra un mensaje de error genérico
+       _showOverlayMessage(
+        'Ocurrió un error al obtener el cupón.',
+        true,
+      );
+    }
+  }
+  
+
+  void _mostrarVentanaEmergente(BuildContext context, Carrito carrito) {
+    String _cupon = "";
+    //double precioDescuento = 0.0;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Ingresar cupon'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -60,26 +210,51 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
                   ),
                 ),
                 SizedBox(height: 16),
-                /*ElevatedButton(
-                  onPressed: () {
-                    _cupon = _cuponController.text;
-                    bool cuponValido = true; // Cambia esto con la lógica real
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'El cupón "$_cupon" es ${cuponValido ? 'válido' : 'inválido'}.',
-                        ),
-                      ),
-                    );
+                ElevatedButton(
+                  onPressed: () {
+                    getCuponPorCodigo(); // Llama a la función cuando se hace clic en el botón
                   },
-                  child: Text('Verificar'),
-                ),*/
+                  child: Text('Verificar cupón'),
+                ),
+
+                /*
+                ElevatedButton(
+                onPressed: () {
+                  _cupon = _cuponController.text;
+
+                  // Aquí, deberías tener una lógica para validar el cupón y obtener su descuento
+                  bool cuponValido = true; // Cambia esto con la lógica real
+                  double descuentoCupon = cuponValido && cuponModel != null ? cuponModel.porcentajeDescuento / 100.0 : 0.0;
+
+                  // Calcula el precio total aplicando el descuento
+                  double precioTotalConDescuento = carrito.montoTotal * (1 - descuentoCupon);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'El cupón "$_cupon" es ${cuponValido ? 'válido' : 'inválido'}.',
+                      ),
+                    ),
+                  );
+
+                  // Actualiza el estado para reflejar el nuevo precio total con descuento
+                  setState(() {
+                    precioDescuento = precioTotalConDescuento;
+                  });
+                },
+                child: Text('Verificar'),
+              ),
+
+              Text("Total: " + "Bs " + precioDescuento.toString()),
+              */
+
                 SizedBox(height: 16),
                 Text('¿Deseas enviar el pedido?'),
               ],
             ),
           ),
+
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar'),
@@ -94,6 +269,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
                 String idCliente = (await obtenerIdUsuario()) ?? '';
                 final pedido = Pedido(
                   idCliente: idCliente,
+                  tipo: _tipoPedido,
                   productos: carrito.items.values.map((item) {
                     return ProductoPedido(
                         idProducto: item.id, cantidad: item.cantidad);
@@ -105,7 +281,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Pedido enviado. Cupón: $_cupon'),
+                    content: Text('Pedido enviado. Cupón: $cuponEnviado'),
                   ),
                 );
 
@@ -120,14 +296,17 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<Carrito>(builder: (context, carrito, child) {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Pedidos"),
-          backgroundColor: Colors.amber,
+          title: Text("Pedidos",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.red,
           elevation: 0,
         ),
         body: SingleChildScrollView(
@@ -261,13 +440,13 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
               );
             } else {
               // Muestra la ventana emergente de confirmación
-              _mostrarVentanaEmergente(context, carrito);
+              _mostrarVentanaEmergenteEnviar(context, carrito);
             }
           },
           backgroundColor: Colors.red,
           child: Icon(
             Icons.send,
-            color: Colors.amberAccent,
+            color: Colors.white,
           ),
         ),
       );

@@ -50,7 +50,7 @@ class PantallaPedidos extends StatelessWidget {
             color: Colors.white, // Cambia el color de la letra aquí
           ),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.red,
       ),
       body: FutureBuilder<String?>(
         future: obtenerIdUsuario(),
@@ -87,7 +87,12 @@ class PantallaPedidos extends StatelessWidget {
                             children: [
                               Text('Hora: ${pedido.hora}'),
                               Text('Monto Total: \$${pedido.montoTotal}'),
-                              Text('Estado: ${pedido.estado}'),
+                              Text('Estado: ${pedido.estado}',
+                                style: TextStyle(
+                                  color: getColorForEstado(pedido.estado),
+                                  // Puedes ajustar otros estilos según tus necesidades, como fontSize, fontWeight, etc.
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -101,5 +106,23 @@ class PantallaPedidos extends StatelessWidget {
         },
       ),
     );
+  }
+
+    Color getColorForEstado(String estado) {
+    switch (estado.toLowerCase()) {
+      case 'pendiente':
+        return Colors.blue;
+      case 'confirmado':
+        return Colors.amber;
+      case 'cancelado':
+        return Colors.red;
+      case 'listo':
+        return Colors.green;
+      case 'entregado':
+        return Colors.grey;
+      default:
+        // Puedes manejar un estado desconocido aquí, por ejemplo, devolver Colors.black
+        return Colors.black;
+    }
   }
 }

@@ -5,6 +5,7 @@ import 'package:proyectomovil/model/modelPedido.dart';
 import 'package:proyectomovil/model/modelPersona.dart';
 import 'package:proyectomovil/model/modelResetPass.dart';
 import 'package:proyectomovil/model/PedidosCliente.dart';
+import 'package:proyectomovil/model/modelCupon.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 part 'api_service.g.dart';
@@ -48,4 +49,7 @@ abstract class ApiService {
   //Pedidos por id de usuario
   @GET("/pedidos/user/{id}")
   Future<List<PedidosCliente>> getPedidosByUserId(@Path("id") String userId);
+
+  @GET('/cupones/codigo/{codigo}')
+  Future<CuponModel?> getCuponPorCodigo(@Path('codigo') String codigo);
 }

@@ -53,7 +53,7 @@ class PantallaMenu extends StatelessWidget {
             title: Text(
               "Menu",
               style: TextStyle(
-                color: Colors.black, // Cambia el color de la letra aquí
+                color: Colors.white, // Cambia el color de la letra aquí
               ),
             ),
             backgroundColor: Colors.red,
@@ -119,7 +119,7 @@ class PantallaMenu extends StatelessWidget {
                         itemCount: productosFiltrados.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 5,
+                          crossAxisSpacing: 3,
                           mainAxisSpacing: 2,
                         ),
                         itemBuilder: (context, index) {
@@ -153,7 +153,7 @@ class PantallaMenu extends StatelessWidget {
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 20,
+                                      //fontSize: 20,
                                     ),
                                   ),
                                   Text(

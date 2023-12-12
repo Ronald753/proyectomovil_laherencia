@@ -93,23 +93,20 @@ class _PantallaDetallesState extends State<PantallaDetalles> {
               Image.network(widget.productosD.imagen ?? 'Imagen no disponible'),
               Text(widget.productosD.nombre ?? 'Nombre no disponible',
               style: TextStyle(
-                  fontSize: 30, // Ajusta el tamaño de la letra aquí
-                  fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
+                  fontSize: 25, // Ajusta el tamaño de la letra aquí
                   fontWeight: FontWeight.bold, // Puedes ajustar el peso de la fuente si lo deseas
                 ),
               ),
               Text('Bs ${widget.productosD.precio ?? 'Precio no disponible'}',
                 style: TextStyle(
                   fontSize: 20, // Ajusta el tamaño de la letra aquí
-                  fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
-                  fontStyle: FontStyle.italic,
                 ),
               ),
               Text(
                   widget.productosD.descripcion ?? 'Descripción no disponible',
                     style: TextStyle(
-                      fontSize: 20, // Ajusta el tamaño de la letra aquí
-                      fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
+                      fontSize: 15, // Ajusta el tamaño de la letra aquí
+                      //fontFamily: 'PlayfairDisplay', // Cambia 'TuFuente' por la fuente que desees usar
                     ),
                   ),
               SizedBox(height: 16),
