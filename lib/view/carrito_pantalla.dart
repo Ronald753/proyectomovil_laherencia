@@ -159,7 +159,7 @@ class _PantallaCarritoState extends State<PantallaCarrito> {
           double precioFinal = carrito.montoTotal - precioFinalDescuento;
 
           _showOverlayMessage(
-            'El cupón $_cupon es válido. Tienes un descuento del $descuentoPorcentaje% y el precio final de tu pedido es $precioFinal',
+            'El cupón $_cupon es válido. Tienes un descuento del $descuentoPorcentaje% y el precio final de tu pedido es $precioFinal Bs',
             false,
           );
         }
